@@ -8,57 +8,59 @@
 
 import UIKit
 import AFNetworking
+import Foundation
+import SystemConfiguration
+
 
 class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
+    @IBOutlet weak var networkError: UIImageView!
     @IBOutlet weak var tableView: UITableView!
-    
     var movies: [NSDictionary]?
-    
+    var refreshControl: UIRefreshControl!
+    var netInfo : NSString = ""
+ 
+ 
+  
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
-        tableView.dataSource = self
-        tableView.delegate = self
+        loadData()
+ 
+        networkError.hidden = true
+        
+          NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("networkStatusChanged:"), name: ReachabilityStatusChangedNotification, object: nil)
         
         
-        
-        
-        
-        let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
-        let url = NSURL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
-        let request = NSURLRequest(URL: url!)
-        let session = NSURLSession(
-            configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
-            delegate:nil,
-            delegateQueue:NSOperationQueue.mainQueue()
-        )
-        
-        let task : NSURLSessionDataTask = session.dataTaskWithRequest(request,
-            completionHandler: { (dataOrNil, response, error) in
-                if let data = dataOrNil {
-                    if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
-                        data, options:[]) as? NSDictionary {
-                            NSLog("response: \(responseDictionary)")
-                            
-                           self.movies = responseDictionary ["results"] as! [NSDictionary]
-                            self.tableView.reloadData()
-                    }
-                }
-        });
-        task.resume()
-        
-        
-        
-        
-        
-        
-        
+         
+        refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: "onRefresh", forControlEvents: UIControlEvents.ValueChanged)
+        tableView.insertSubview(refreshControl, atIndex: 0)
+     
         
         
         // Do any additional setup after loading the view.
     }
+    
+    func delay(delay:Double, closure:()->()) {
+        dispatch_after(
+            dispatch_time(
+                DISPATCH_TIME_NOW,
+                Int64(delay * Double(NSEC_PER_SEC))
+            ),
+            dispatch_get_main_queue(), closure)
+    }
+    
+
+    func onRefresh() {
+        
+        delay(2, closure: {
+            self.refreshControl.endRefreshing()
+        })
+        Reach().monitorReachabilityChanges()
+        }
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -71,14 +73,14 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         if let movies = movies {
             return movies.count
         } else {
+           
             return 0
+ 
         }
         
 
     }
     
-    // Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
-    // Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
     
  
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -103,17 +105,59 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         
         return cell
     }
-
-    
-    
-    
-    
-
-    
-    
-    
-
    
+    
+    func loadData() {
+        
+        
+        tableView.dataSource = self
+        tableView.delegate = self
+        
+        let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
+        let url = NSURL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
+        let request = NSURLRequest(URL: url!)
+        let session = NSURLSession(
+            configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
+            delegate:nil,
+            delegateQueue:NSOperationQueue.mainQueue()
+        )
+        
+        let task : NSURLSessionDataTask = session.dataTaskWithRequest(request,
+            completionHandler: { (dataOrNil, response, error) in
+                if let data = dataOrNil {
+                    if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
+                        data, options:[]) as? NSDictionary {
+                            NSLog("response: \(responseDictionary)")
+                            
+                            self.movies = responseDictionary ["results"] as! [NSDictionary]
+                            self.tableView.reloadData()
+                    }
+                }
+        });
+        task.resume()
+        
+
+    
+    }
+    
+
+
+    func networkStatusChanged(notification: NSNotification) {
+        let userInfo = notification.userInfo
+       
+        netInfo = userInfo! ["Status"] as! NSString
+        if netInfo == "Online (WiFi)" {
+           networkError.hidden = true
+        } else {
+            networkError.hidden = false
+ 
+            
+        }
+        
+    }
+
+
+
     /*
     // MARK: - Navigation
 
@@ -125,3 +169,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     */
 
 }
+
+
+
+ 
