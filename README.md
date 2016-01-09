@@ -8,22 +8,32 @@ User Stories
 
 The following required functionality is complete: 
 
-[X] User can view the movies whhich are playing with title and overview. 
+[X] User can view a list of movies currently playing in theaters from The Movie Database.
+
+[X]Poster images are loaded using the UIImageView category in the AFNetworking library.
+
+[X]The movie poster is available by appending the returned poster_path to https://image.tmdb.org/t/p/w342.
+
+[X]User sees a loading state while waiting for the movies API. You can use one of the 3rd party libraries listed on CocoaControls.
+
+[X]User can pull to refresh the movie list.
 
 The following optional features are implemented:
-[x]
+[ ] User sees an error message when there's a networking error. You may not use UIAlertController or a 3rd party library to display the error. See this screenshot for what the error message should look like.
+Hint: Using the hidden property of a view can be helpful to toggle the network error view's visibility.
 
-[ ] 
+[ ]Movies are displayed using a CollectionView instead of a TableView.
 
-[x] 
+[ ]User can search for a movie.
+Hint: Consider using a UISearchBar for this feature. Don't use the UISearchDisplayController.
 
-[x]
+[ ]All images fade in as they are loading:
+Hint: Use the - (void)setImageWithURLRequest:(NSURLRequest *)urlRequest method in AFNetworking. Create an additional category method that has a success block that fades in the image. The image should only fade in if it's coming from network, not cache.
 
-The following additional features are implemented:
-
-[x]
-
-## Video Walkthrough 
+[ ]Customize the UI. You can use Iconmonstr and The Noun Project as good sources of images.
+ 
+ 
+ ## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories:
 
