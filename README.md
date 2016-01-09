@@ -7,6 +7,7 @@ Submitted by: Davis Guohua Xie
 User Stories
 
 The following required functionality is complete: 
+
 [X] User can view the movies whhich are playing with title and overview. 
 
 The following optional features are implemented:
