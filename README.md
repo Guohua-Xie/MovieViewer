@@ -19,6 +19,7 @@ The following required functionality is complete:
 [X]User can pull to refresh the movie list.
 
 The following optional features are implemented:
+
 [ ] User sees an error message when there's a networking error. You may not use UIAlertController or a 3rd party library to display the error. See this screenshot for what the error message should look like.
 Hint: Using the hidden property of a view can be helpful to toggle the network error view's visibility.
 
