@@ -20,7 +20,7 @@ The following required functionality is complete:
 
 The following optional features are implemented:
 
-[ ] User sees an error message when there's a networking error. You may not use UIAlertController or a 3rd party library to display the error. See this screenshot for what the error message should look like.
+[x] User sees an error message when there's a networking error. You may not use UIAlertController or a 3rd party library to display the error. See this screenshot for what the error message should look like.
 Hint: Using the hidden property of a view can be helpful to toggle the network error view's visibility.
 
 [ ]Movies are displayed using a CollectionView instead of a TableView.
